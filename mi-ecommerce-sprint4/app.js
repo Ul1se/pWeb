@@ -1,0 +1,11 @@
+const express=require('express'),path=require('path'),session=require('express-session'),layouts=require('express-ejs-layouts');
+require('./db/database');const products=require('./services/productsService'),cart=require('./services/cartService');const app=express();const http=require('node:http');const realtime=require('./services/realtimeService');
+app.set('view engine','ejs');app.set('views',path.join(__dirname,'views'));app.use(express.static(path.join(__dirname,'assets')));app.use(express.urlencoded({extended:false}));
+const sessionMiddleware=session({name:'puntosclub.sid',secret:process.env.SESSION_SECRET||'dev-only-change-this-secret-before-deploy',resave:false,saveUninitialized:false,cookie:{httpOnly:true,sameSite:'lax'}});app.use(sessionMiddleware);
+app.use(layouts);app.set('layout','layouts/main');app.use((req,res,next)=>{res.locals.categories=[...new Set(products.all().map(p=>p.category))];res.locals.cartCount=cart.count(req);res.locals.query='';res.locals.page=req.path;next()});
+app.use(require('./routes/productRoutes'));app.use(require('./routes/cartRoutes'));
+app.get('/checkout',(req,res)=>res.render('pages/checkout',{title:'Checkout'}));
+app.get('/login',(req,res)=>res.render('pages/login',{title:'Ingresar',layout:false}));app.get('/register',(req,res)=>res.render('pages/register',{title:'Registro',layout:false}));
+app.post('/register',(req,res)=>res.status(501).send('El registro real estará disponible en Sprint 4.'));
+app.use((req,res)=>res.status(404).render('errors/404',{title:'Página no encontrada'}));app.use(require('./middleware/errorHandler'));
+const server=http.createServer(app);realtime.start(server,sessionMiddleware);if(require.main===module)server.listen(process.env.PORT||3000,()=>console.log('http://localhost:'+(process.env.PORT||3000)));module.exports=app;module.exports.server=server;
