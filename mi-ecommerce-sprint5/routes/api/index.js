@@ -1,0 +1,9 @@
+const router=require('express').Router();const products=require('../../controllers/api/productsApiController');const categories=require('../../controllers/api/categoriesApiController');const ps=require('../../services/productsService');const cs=require('../../services/categoriesService');
+router.route('/products').get(products.all).post(products.create);
+router.route('/products/:id').get(products.detail).put(products.update).delete(products.remove);
+router.route('/categories').get(categories.all).post(categories.create);
+router.route('/categories/:id').get(categories.detail).put(categories.update).delete(categories.remove);
+router.get('/stats',(req,res)=>res.json({totalProducts:ps.count(),totalCategories:cs.count()}));
+router.use((req,res)=>res.status(404).json({error:'Endpoint no encontrado'}));
+router.use((err,req,res,next)=>{const status=err.status||(/UNIQUE constraint failed|FOREIGN KEY constraint failed|CHECK constraint failed|NOT NULL constraint failed/.test(err.message)?400:500);if(status>=500)console.error(err);res.status(status).json({error:status===500?'Error interno del servidor':err.message})});
+module.exports=router;
