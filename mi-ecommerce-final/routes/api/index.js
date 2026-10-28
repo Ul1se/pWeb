@@ -1,0 +1,11 @@
+const {verifyToken,requireAdmin}=require('../../middleware/auth');
+const router=require('express').Router();const products=require('../../controllers/api/productsApiController');const categories=require('../../controllers/api/categoriesApiController');const ps=require('../../services/productsService');const cs=require('../../services/categoriesService');
+router.use('/auth',require('./auth'));
+router.route('/products').get(products.all).post(verifyToken,requireAdmin,products.create);
+router.route('/products/:id').get(products.detail).put(verifyToken,requireAdmin,products.update).delete(verifyToken,requireAdmin,products.remove);
+router.route('/categories').get(categories.all).post(verifyToken,requireAdmin,categories.create);
+router.route('/categories/:id').get(categories.detail).put(verifyToken,requireAdmin,categories.update).delete(verifyToken,requireAdmin,categories.remove);
+router.get('/stats',(req,res)=>res.json({totalProducts:ps.count(),totalCategories:cs.count()}));
+router.use((req,res)=>res.status(404).json({error:'Endpoint no encontrado'}));
+router.use((err,req,res,next)=>{const status=err.status||(/UNIQUE constraint failed|FOREIGN KEY constraint failed|CHECK constraint failed|NOT NULL constraint failed/.test(err.message)?400:500);if(status>=500)console.error(err);res.status(status).json({error:status===500?'Error interno del servidor':err.message})});
+module.exports=router;

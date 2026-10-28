@@ -1,0 +1,3 @@
+require('dotenv').config();const bcrypt=require('bcrypt');const db=require('../db/database');
+(async()=>{const [email,password,name='Administrador']=process.argv.slice(2);if(!email||!password||password.length<8){console.error('Uso: npm run create-admin -- correo@ejemplo.com contraseñaSegura Nombre');process.exitCode=1;return;}
+const normalized=email.trim().toLowerCase();const hash=await bcrypt.hash(password,12);db.prepare("INSERT INTO users(name,email,password_hash,role) VALUES(?,?,?,'admin') ON CONFLICT(email) DO UPDATE SET name=excluded.name,password_hash=excluded.password_hash,role='admin'").run(name,normalized,hash);console.log('Administrador creado/actualizado:',normalized);})().catch(e=>{console.error(e);process.exitCode=1});
