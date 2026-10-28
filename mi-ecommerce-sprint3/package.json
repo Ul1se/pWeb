@@ -1,0 +1,18 @@
+{
+  "name": "mi-ecommerce-sprint3",
+  "version": "3.0.0",
+  "private": true,
+  "scripts": {
+    "start": "node app.js",
+    "dev": "node --watch app.js",
+    "test": "node --test",
+    "migrate": "node db/migrate.js"
+  },
+  "dependencies": {
+    "express": "^4.21.2",
+    "ejs": "^3.1.10",
+    "express-session": "^1.18.1",
+    "express-ejs-layouts": "^2.5.1",
+    "better-sqlite3": "^11.10.0"
+  }
+}
