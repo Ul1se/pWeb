@@ -1,0 +1,1 @@
+module.exports=(err,req,res,next)=>{console.error(err);if(res.headersSent)return next(err);const status=err.status===400?400:500;res.status(status).render(status===400?'errors/400':'errors/500',{title:status===400?'Solicitud inválida':'Error interno',message:status===400?err.message:undefined});};

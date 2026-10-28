@@ -1,0 +1,16 @@
+{
+  "name": "mi-ecommerce-sprint2",
+  "version": "2.0.0",
+  "private": true,
+  "scripts": {
+    "start": "node app.js",
+    "dev": "node --watch app.js",
+    "test": "node --test"
+  },
+  "dependencies": {
+    "express": "^4.21.2",
+    "ejs": "^3.1.10",
+    "express-session": "^1.18.1",
+    "express-ejs-layouts": "^2.5.1"
+  }
+}
